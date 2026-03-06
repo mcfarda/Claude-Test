@@ -473,7 +473,7 @@
 const PASS='xbox2024';
 const GP_SVG=`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93zM12 4a8 8 0 1 1 0 16A8 8 0 0 1 12 4zm-1 4v8l6-4-6-4z"/></svg>`;
 
-let reviews=JSON.parse(localStorage.getItem('pmb_v7')||'null');
+let reviews=JSON.parse(localStorage.getItem('pmb_v8')||'null');
 const stars={w:0,u:0};
 const imgData={w:null,u:null};
 let uploadedTxt='';
@@ -494,11 +494,20 @@ if(!reviews){
   save();
 }
 
-function save(){localStorage.setItem('pmb_v7',JSON.stringify(reviews));}
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');window.scrollTo(0,0);}
-function showPublic(){renderGrid();updateHeroStats();showPage('public');}
-function showLogin(){document.getElementById('pw-input').value='';document.getElementById('login-err').style.display='none';showPage('login');}
-function showAdmin(){renderAdminTable();updateAdminCount();showPage('admin');}
+function save(){localStorage.setItem('pmb_v8',JSON.stringify(reviews));}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showPublic(){try{renderGrid();updateHeroStats();}catch(e){} showPage('public');}
+function showLogin(){
+  showPage('login');
+  try{document.getElementById('pw-input').value='';}catch(e){}
+  try{document.getElementById('login-err').style.display='none';}catch(e){}
+}
+function showAdmin(){try{renderAdminTable();updateAdminCount();}catch(e){} showPage('admin');}
 function doLogin(){if(document.getElementById('pw-input').value===PASS){showAdmin();}else{document.getElementById('login-err').style.display='block';}}
 function doLogout(){showPublic();}
 function setStar(key,n){stars[key]=n;document.querySelectorAll(`#sp-${key} .sp`).forEach((s,i)=>s.classList.toggle('on',i<n));}
@@ -642,8 +651,8 @@ function miniStars(n){return`<span style="color:var(--bright)">${'★'.repeat(n)
 function today(){return new Date().toISOString().slice(0,10);}
 function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});}
 
-renderGrid();
-updateHeroStats();
+try{renderGrid();}catch(e){console.error('renderGrid',e);}
+try{updateHeroStats();}catch(e){console.error('updateHeroStats',e);}
 </script>
 </body>
 </html>
